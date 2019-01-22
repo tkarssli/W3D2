@@ -6,7 +6,7 @@ require_relative 'users'
 require_relative 'replies'
 require_relative 'questions_database'
 
-class Questions
+class Questions 
     attr_accessor :id, :title, :body, :author_id 
 
     def self.all

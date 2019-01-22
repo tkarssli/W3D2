@@ -5,21 +5,13 @@ require_relative 'questions'
 require_relative 'users'
 require_relative 'replies'
 require_relative 'questions_database' 
+require_relative 'questions_database' 
 
-class QuestionFollows
+class QuestionFollows < ModelBase
     attr_accessor :id, :question_id, :user_id
 
     def self.all
         data = QuestionsDatabase.instance.execute('SELECT * FROM question_follows')
-        data.map {|datum| QuestionFollows.new(datum)}
-    end
-
-    def self.find_by_id(id)
-        data = QuestionsDatabase.instance.execute(<<-SQL, id)
-        SELECT * 
-        FROM question_follows 
-        WHERE id = ?
-        SQL
         data.map {|datum| QuestionFollows.new(datum)}
     end
 
