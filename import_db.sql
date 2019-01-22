@@ -57,6 +57,8 @@ VALUES
     ('Mason','Chinkin'),
     ('Tamir','Karssli');
 
+
+-- Questions -------
 INSERT INTO
     questions (title, body, author_id)
 VALUES
@@ -115,9 +117,22 @@ VALUES
     (SELECT MAX(id) FROM replies WHERE question_id = (SELECT id FROM questions WHERE title = "where's my car?")), 
     "I forgot your idea");
 
+-- Question Likes -------
 INSERT INTO
     question_likes (question_id, user_id)
 VALUES
     ((SELECT id FROM questions WHERE title = "where's my car?"),
     (SELECT id FROM users WHERE fname = "Tamir"));
+
+INSERT INTO
+    question_likes (question_id, user_id)
+VALUES
+    ((SELECT id FROM questions WHERE title = "Is this my dog?"),
+    (SELECT id FROM users WHERE fname = "Mason"));
+
+INSERT INTO
+    question_likes (question_id, user_id)
+VALUES
+    ((SELECT id FROM questions WHERE title = "where's my car?"),
+    (SELECT id FROM users WHERE fname = "Mason"));
     

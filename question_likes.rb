@@ -41,7 +41,7 @@ class QuestionLikes
         data.map {|datum| QuestionLikes.new(datum)}
     end
 
-    def self.likers_by_question_id(question_id)
+    def self.likers_for_question_id(question_id)
         data = QuestionsDatabase.instance.execute(<<-SQL, question_id)
         SELECT * 
         FROM question_likes 
@@ -49,6 +49,16 @@ class QuestionLikes
         WHERE question_id = ?
         SQL
         data.map {|datum| Users.new(datum)}
+    end
+
+    def self.liked_questions_for_user_id(user_id)
+        data = QuestionsDatabase.instance.execute(<<-SQL, user_id)
+        SELECT * 
+        FROM question_likes 
+        JOIN questions ON questions.id = question_likes.question_id
+        WHERE user_id = ?
+        SQL
+        data.map {|datum| Questions.new(datum)}
     end
 
     def self.num_likes_for_question_id(question_id)
@@ -59,6 +69,18 @@ class QuestionLikes
         GROUP BY question_likes.question_id
         SQL
         data[0]['num_likes']
+    end
+
+    def self.most_liked_questions(n)
+        data = QuestionsDatabase.instance.execute(<<-SQL, n)
+        SELECT * 
+        FROM questions
+        LEFT JOIN question_likes ON question_likes.question_id = questions.id
+        GROUP BY questions.id 
+        ORDER BY COUNT(*) DESC
+        LIMIT ?
+        SQL
+        data.map {|datum| Questions.new(datum)}
     end
 
     def initialize(options={})

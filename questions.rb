@@ -24,6 +24,18 @@ class Questions
         Questions.new(data[0])
     end
 
+    def self.most_liked(n)
+        data = QuestionsDatabase.instance.execute(<<-SQL, n)
+        SELECT * 
+        FROM questions
+        LEFT JOIN question_likes ON question_likes.question_id = questions.id
+        GROUP BY questions.id 
+        ORDER BY COUNT(*) DESC
+        LIMIT ?
+        SQL
+        data.map {|datum| Questions.new(datum)}
+    end
+
     def initialize(options={})
         @id = options['id']
         @title = options['title']
@@ -41,5 +53,30 @@ class Questions
 
     def followers
         QuestionFollows.followers_for_question_id(self.id)
+    end
+
+    def likers
+        QuestionLikes.likers_for_question_id(self.id)
+    end
+
+    def num_likes
+        QuestionLikes.num_likes_for_question_id(self.id)
+    end
+
+    def save
+        return update if @id
+        QuestionsDatabase.instance.execute(<<-SQL, @title, @body, @author_id)
+        INSERT INTO questions (title, body, author_id)
+        VALUES (?, ?, ?)
+        SQL
+        @id = QuestionsDatabase.instance.last_insert_row_id
+    end
+
+    def update
+        QuestionsDatabase.instance.execute(<<-SQL, @title, @body, @author_id, @id)
+        UPDATE questions
+        SET title = ?, body = ?, author_id = ?
+        WHERE id = ?
+        SQL
     end
 end

@@ -50,4 +50,36 @@ class Users
     def followed_questions
         QuestionFollows.followed_questions_for_user_id(self.id)
     end
+
+    def liked_questions
+        QuestionLikes.liked_questions_for_user_id(self.id)
+    end
+
+    def average_karma
+        data = QuestionsDatabase.instance.execute(<<-SQL)
+        SELECT CAST(COUNT(*) AS FLOAT)/( COUNT(DISTINCT(questions.id)))
+        FROM questions
+        LEFT JOIN question_likes ON question_likes.question_id = questions.id
+        WHERE questions.author_id = 1
+        GROUP BY questions.author_id
+        SQL
+        data.map {|datum| Questions.new(datum)}
+    end
+
+    def save
+        return update if @id
+        QuestionsDatabase.instance.execute(<<-SQL, @fname, @lname)
+        INSERT INTO users (fname, lname)
+        VALUES (?, ?)
+        SQL
+        @id = QuestionsDatabase.instance.last_insert_row_id
+    end
+
+    def update
+        QuestionsDatabase.instance.execute(<<-SQL, @fname, @lname, @id)
+        UPDATE users
+        SET fname = ?, lname = ?
+        WHERE id = ?
+        SQL
+    end
 end

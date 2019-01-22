@@ -68,9 +68,9 @@ class QuestionFollows
         LEFT JOIN question_follows ON question_follows.question_id = questions.id
         GROUP BY questions.id 
         ORDER BY COUNT(*) DESC
-        LIMIT 1 OFFSET ?
+        LIMIT ?
         SQL
-        Questions.new(data[0])
+        data.map {|datum| Questions.new(datum)}
     end
 
     def initialize(options={})
