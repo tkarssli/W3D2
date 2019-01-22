@@ -41,6 +41,26 @@ class QuestionLikes
         data.map {|datum| QuestionLikes.new(datum)}
     end
 
+    def self.likers_by_question_id(question_id)
+        data = QuestionsDatabase.instance.execute(<<-SQL, question_id)
+        SELECT * 
+        FROM question_likes 
+        JOIN users ON users.id = question_likes.user_id
+        WHERE question_id = ?
+        SQL
+        data.map {|datum| Users.new(datum)}
+    end
+
+    def self.num_likes_for_question_id(question_id)
+        data = QuestionsDatabase.instance.execute(<<-SQL, question_id)
+        SELECT COUNT(*) AS num_likes
+        FROM question_likes
+        WHERE question_likes.question_id = ?
+        GROUP BY question_likes.question_id
+        SQL
+        data[0]['num_likes']
+    end
+
     def initialize(options={})
         @id = options['id']
         @question_id = options['question_id']

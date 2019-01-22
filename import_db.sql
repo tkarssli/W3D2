@@ -61,13 +61,36 @@ INSERT INTO
     questions (title, body, author_id)
 VALUES
     ("where's my car?", 'dude...', (SELECT id FROM users WHERE fname = 'Mason'));
+INSERT INTO
+    questions (title, body, author_id)
+VALUES
+    ("Is this my dog?", 'mmmmmmmm', (SELECT id FROM users WHERE fname = 'Mason'));
+INSERT INTO
+    questions (title, body, author_id)
+VALUES
+    ("What is the meaning of life?", 'asdadasdasdasd', (SELECT id FROM users WHERE fname = 'Tamir'));
 
+
+-- Question Follows -------
 INSERT INTO
     question_follows (question_id, user_id)
 VALUES
     ((SELECT id FROM questions WHERE title = "where's my car?"),
     (SELECT id FROM users WHERE fname = "Tamir"));
 
+INSERT INTO
+    question_follows (question_id, user_id)
+VALUES
+    ((SELECT id FROM questions WHERE title = "where's my car?"),
+    (SELECT id FROM users WHERE fname = "Mason"));
+
+INSERT INTO
+    question_follows (question_id, user_id)
+VALUES
+    ((SELECT id FROM questions WHERE title = "Is this my dog?"),
+    (SELECT id FROM users WHERE fname = "Mason"));
+
+-- Replies ----------
 INSERT INTO
     replies (question_id, user_id, parent_reply_id, reply_body)
 VALUES

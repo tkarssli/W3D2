@@ -7,7 +7,7 @@ require_relative 'replies'
 require_relative 'questions_database'
 
 class Questions
-    attr_accessor :id, :title, :body, :author_id
+    attr_accessor :id, :title, :body, :author_id 
 
     def self.all
         data = QuestionsDatabase.instance.execute('SELECT * FROM questions')
@@ -37,5 +37,9 @@ class Questions
 
     def replies
         Replies.find_by_question_id(self.id)
+    end
+
+    def followers
+        QuestionFollows.followers_for_question_id(self.id)
     end
 end
